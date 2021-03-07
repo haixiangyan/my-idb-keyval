@@ -1,10 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>测试</title>
+  <meta charset="UTF-8">
+  <style>
+      li {
+          margin: 8px 0;
+      }
+  </style>
+  <title>测试</title>
 </head>
 <body>
+
+<ul>
+  <li>
+    <button id="set">set('name', '帅哥')</button>
+  </li>
+  <li>
+    <button id="get">get('name')</button>
+  </li>
+  <li>
+    <button id="del">del()</button>
+  </li>
+  <li>
+    <button id="clear">clear()</button>
+  </li>
+  <li>
+    <button id="setMany">setMany([['age', 11], ['gender', '男人'])</button>
+  </li>
+  <li>
+    <button id="getMany">getMany(['age', 'gender'])</button>
+  </li>
+  <li>
+    <button id="keys">keys()</button>
+  </li>
+  <li>
+    <button id="values">values()</button>
+  </li>
+  <li>
+    <button id="entries">entries()</button>
+  </li>
+  <li>
+    <button id="uglyGet">uglyGet('name')</button>
+  </li>
+</ul>
 
 </body>
 </html>
