@@ -5,12 +5,7 @@
   "description": "学习 idb-keyval",
   "main": "index.js",
   "scripts": {
-    "test": "npm run build:prod && node ./test/test.js",
-    "webpack": "webpack",
-    "dev": "webpack serve --config webpack.development.js",
-    "start": "npm run dev",
-    "build:dev": "webpack --config webpack.development.js",
-    "build:prod": "webpack --config webpack.production.js"
+    "start": "webpack serve --config webpack.development.js"
   },
   "author": "HaixiangYan",
   "license": "MIT",
