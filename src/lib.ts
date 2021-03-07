@@ -1,7 +1,9 @@
-type Api = <T>(
+type Store = <T>(
   txMode: IDBTransactionMode,
   callback: (store: IDBObjectStore) => T | PromiseLike<T>
 ) => Promise<T>
+
+let defaultStore: Store | null = null
 
 /**
  * 将 request 变为 Promise 对象
@@ -23,7 +25,7 @@ export function promisifyRequest<T = undefined>(request: IDBRequest<T> | IDBTran
  * @param dbName
  * @param storeName
  */
-export function createStore(dbName: string, storeName: string): Api {
+export function createStore(dbName: string, storeName: string): Store {
   // 打开/创建数据库
   const request = indexedDB.open(dbName)
 
@@ -43,4 +45,13 @@ export function createStore(dbName: string, storeName: string): Api {
     )
 }
 
+/**
+ * 获取单例 default store
+ */
+export function getDefaultStore() {
+  if (!defaultStore) {
+    defaultStore = createStore('key-val', 'keyval')
+  }
 
+  return defaultStore
+}

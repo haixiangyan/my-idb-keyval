@@ -1,1 +1,3 @@
-console.log('hello')
+import {createStore} from './lib'
+
+// createStore('xxx', 'person')
