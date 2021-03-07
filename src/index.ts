@@ -7,6 +7,7 @@ const value = '帅哥'
 const inputKeys = ['age', 'gender']
 const inputKeyvals: [IDBValidKey, any][] = [['age', 11], ['gender', '男人']]
 
+// 绑定对应 idb-keyval 的方法
 document.querySelector('#set').addEventListener('click', async () => {
   await set(key, value)
 });
