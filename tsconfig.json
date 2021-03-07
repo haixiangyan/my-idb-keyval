@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "target": "es5",
+    "module": "es6",
+    "sourceMap": true,
+    "outDir": "./dist/"
+  }
+}
