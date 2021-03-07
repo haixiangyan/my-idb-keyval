@@ -62,7 +62,18 @@ export function getDefaultStore() {
  * @param customStore 自定义 store 获取 defaultStore
  */
 export function get<T>(key: IDBValidKey, customStore = getDefaultStore()): Promise<T | undefined> {
-  return customStore('readonly', (store => promisifyRequest(store.get(key))))
+  return customStore('readonly', store => promisifyRequest(store.get(key)))
+}
+
+/**
+ * 批量获取 values
+ * @param keys 传入的 keys
+ * @param customStore 自定义 store 获取 defaultStore
+ */
+export function getMany(keys: IDBValidKey[], customStore = getDefaultStore()): Promise<any[]> {
+  return customStore('readonly', store => {
+    return Promise.all(keys.map(k => promisifyRequest(store.get(k))))
+  })
 }
 
 /**
@@ -71,9 +82,21 @@ export function get<T>(key: IDBValidKey, customStore = getDefaultStore()): Promi
  * @param value 传入的 value
  * @param customStore 自定义 store 获取 defaultStore
  */
-export function set(key: IDBValidKey, value: any, customStore = getDefaultStore()) {
+export function set(key: IDBValidKey, value: any, customStore = getDefaultStore()): Promise<IDBValidKey> {
   // 注意：这里参数的顺序：第一个是 value，第二个才是 key
-  return customStore('readwrite', (store => promisifyRequest(store.put(value, key))))
+  return customStore('readwrite', store => promisifyRequest(store.put(value, key)))
+}
+
+/**
+ * 批量设置 key-value 对
+ * @param entries 传入的键值对
+ * @param customStore 自定义 store 获取 defaultStore
+ */
+export function setMany(entries: [IDBValidKey, any][], customStore = getDefaultStore()): Promise<void> {
+  return customStore('readwrite', store => {
+    entries.forEach(([k, v]) => store.put(v, k))
+    return promisifyRequest(store.transaction)
+  })
 }
 
 /**
@@ -82,7 +105,7 @@ export function set(key: IDBValidKey, value: any, customStore = getDefaultStore(
  * @param customStore 自定义 store 获取 defaultStore
  */
 export function del(key: IDBValidKey, customStore = getDefaultStore()) {
-  return customStore('readwrite', (store => promisifyRequest(store.delete(key))))
+  return customStore('readwrite', store => promisifyRequest(store.delete(key)))
 }
 
 /**
@@ -90,7 +113,7 @@ export function del(key: IDBValidKey, customStore = getDefaultStore()) {
  * @param customStore 自定义 store 获取 defaultStore
  */
 export function clear(customStore = getDefaultStore()) {
-  return customStore('readwrite', (store => promisifyRequest(store.clear())))
+  return customStore('readwrite', store => promisifyRequest(store.clear()))
 }
 
 /**
@@ -99,7 +122,7 @@ export function clear(customStore = getDefaultStore()) {
  * @param callback
  */
 function eachCursor(customStore: Store, callback: (cursor: IDBCursorWithValue) => void): Promise<void> {
-  return customStore('readonly', (store) => {
+  return customStore('readonly', store => {
     store.openCursor().onsuccess = function(this, event) {
       if (!this.result) return
       callback(this.result)
@@ -119,7 +142,7 @@ export function keys(customStore = getDefaultStore()): Promise<IDBValidKey[]> {
 
   return eachCursor(
     customStore,
-    (cursor) => keys.push(cursor.key)
+    cursor => keys.push(cursor.key)
   ).then(() => keys)
 }
 
@@ -132,7 +155,7 @@ export function values(customStore = getDefaultStore()): Promise<any[]> {
 
   return eachCursor(
     customStore,
-    (cursor) => values.push(cursor.value)
+    cursor => values.push(cursor.value)
   ).then(() => values)
 }
 
@@ -145,6 +168,6 @@ export function entries(customStore = getDefaultStore()): Promise<[IDBValidKey, 
 
   return eachCursor(
     customStore,
-    (cursor) => entries.push([cursor.key, cursor.value])
+    cursor => entries.push([cursor.key, cursor.value])
   ).then(() => entries)
 }
