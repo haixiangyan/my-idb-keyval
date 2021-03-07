@@ -14,9 +14,9 @@ let defaultStore: Store | null = null
 export function promisifyRequest<T = undefined>(request: IDBRequest<T> | IDBTransaction): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     // @ts-ignore
-    request.onsuccess = () => resolve(request.result)
-
-    request.onerror = () => reject(request.error)
+    request.oncomplete = request.onsuccess = () => resolve(request.result)
+    // @ts-ignore
+    request.onabort = request.onerror = () => reject(request.error)
   });
 }
 
@@ -91,4 +91,60 @@ export function del(key: IDBValidKey, customStore = getDefaultStore()) {
  */
 export function clear(customStore = getDefaultStore()) {
   return customStore('readwrite', (store => promisifyRequest(store.clear())))
+}
+
+/**
+ * 通过 cursor 获取 storeObject 里的所有 key-value
+ * @param customStore
+ * @param callback
+ */
+function eachCursor(customStore: Store, callback: (cursor: IDBCursorWithValue) => void): Promise<void> {
+  return customStore('readonly', (store) => {
+    store.openCursor().onsuccess = function(this, event) {
+      if (!this.result) return
+      callback(this.result)
+      this.result.continue()
+    }
+
+    return promisifyRequest(store.transaction)
+  })
+}
+
+/**
+ * 获取数据库里所有 keys
+ * @param customStore
+ */
+export function keys(customStore = getDefaultStore()): Promise<IDBValidKey[]> {
+  const keys: IDBValidKey[] = []
+
+  return eachCursor(
+    customStore,
+    (cursor) => keys.push(cursor.key)
+  ).then(() => keys)
+}
+
+/**
+ * 获取数据库里所有 values
+ * @param customStore
+ */
+export function values(customStore = getDefaultStore()): Promise<any[]> {
+  const values: any[] = []
+
+  return eachCursor(
+    customStore,
+    (cursor) => values.push(cursor.value)
+  ).then(() => values)
+}
+
+/**
+ * 获取数据库里所有 entries
+ * @param customStore
+ */
+export function entries(customStore = getDefaultStore()): Promise<[IDBValidKey, any][]> {
+  const entries: [IDBValidKey, any][] = []
+
+  return eachCursor(
+    customStore,
+    (cursor) => entries.push([cursor.key, cursor.value])
+  ).then(() => entries)
 }

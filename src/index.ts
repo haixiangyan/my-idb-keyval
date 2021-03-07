@@ -1,9 +1,13 @@
-import {clear, del, get, set} from './lib'
+import {clear, del, entries, get, keys, set, values} from './lib'
 
-set('hello', 1).then(() => {
-  get<string>('hello').then((value) => {
-    console.log(value)
-    // del('hello').then()
-    clear()
-  })
+keys().then((keys) => {
+  console.log('keys', keys)
+})
+
+values().then((values) => {
+  console.log('values', values)
+})
+
+entries().then((entries) => {
+  console.log('entries', entries)
 })
