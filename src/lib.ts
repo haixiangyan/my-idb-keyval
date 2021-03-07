@@ -55,3 +55,40 @@ export function getDefaultStore() {
 
   return defaultStore
 }
+
+/**
+ * 根据 key 获取对应 value
+ * @param key 传入的 key
+ * @param customStore 自定义 store 获取 defaultStore
+ */
+export function get<T>(key: IDBValidKey, customStore = getDefaultStore()): Promise<T | undefined> {
+  return customStore('readonly', (store => promisifyRequest(store.get(key))))
+}
+
+/**
+ * 设置 key-value 对，key 不存在则创建，key 存在则覆盖
+ * @param key 传入的 key
+ * @param value 传入的 value
+ * @param customStore 自定义 store 获取 defaultStore
+ */
+export function set(key: IDBValidKey, value: any, customStore = getDefaultStore()) {
+  // 注意：这里参数的顺序：第一个是 value，第二个才是 key
+  return customStore('readwrite', (store => promisifyRequest(store.put(value, key))))
+}
+
+/**
+ * 根据 key 删除对应的 key-value 对
+ * @param key 传入的 key
+ * @param customStore 自定义 store 获取 defaultStore
+ */
+export function del(key: IDBValidKey, customStore = getDefaultStore()) {
+  return customStore('readwrite', (store => promisifyRequest(store.delete(key))))
+}
+
+/**
+ * 清除数据库内容
+ * @param customStore 自定义 store 获取 defaultStore
+ */
+export function clear(customStore = getDefaultStore()) {
+  return customStore('readwrite', (store => promisifyRequest(store.clear())))
+}

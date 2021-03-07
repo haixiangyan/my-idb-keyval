@@ -1,3 +1,9 @@
-import {createStore} from './lib'
+import {clear, del, get, set} from './lib'
 
-// createStore('xxx', 'person')
+set('hello', 1).then(() => {
+  get<string>('hello').then((value) => {
+    console.log(value)
+    // del('hello').then()
+    clear()
+  })
+})
