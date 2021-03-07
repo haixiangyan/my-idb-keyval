@@ -123,7 +123,7 @@ export function clear(customStore = getDefaultStore()) {
  */
 function eachCursor(customStore: Store, callback: (cursor: IDBCursorWithValue) => void): Promise<void> {
   return customStore('readonly', store => {
-    store.openCursor().onsuccess = function(this, event) {
+    store.openCursor().onsuccess = function(this) {
       if (!this.result) return
       callback(this.result)
       this.result.continue()
