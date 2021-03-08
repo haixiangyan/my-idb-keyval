@@ -292,7 +292,7 @@ export async function uglySet(key, value) {
 
 还是有重复，我连 `getDefaultStore()` 都不想要了，所以最好的方法是在函数里加一个默认参数：
 
-```js
+```ts
 export async function get<T>(key: IDBValidKey, customStore = getDefaultStore()): Promise<T | undefined> {
   return (await customStore)('readonly', store => promisifyRequest(store.get(key)))
 }
@@ -304,7 +304,7 @@ export async function get<T>(key: IDBValidKey, customStore = getDefaultStore()):
 
 现在所有重复代码都优化完了，直接写增、删、改、查吧：
 
-```
+```ts
 export async function get<T>(key: IDBValidKey, customStore = getDefaultStore()): Promise<T | undefined> {
   return (await customStore)('readonly', store => promisifyRequest(store.get(key)))
 }
@@ -325,7 +325,7 @@ export async function clear(customStore = getDefaultStore()) {
 
 有时候，我们可能会一次获取和设置一堆的 key-val，所以要提供批量操作的接口：
 
-```
+```ts
 export async function getMany(keys: IDBValidKey[], customStore = getDefaultStore()): Promise<any[]> {
   return (await customStore)('readonly', store => {
     return Promise.all(keys.map(k => promisifyRequest(store.get(k))))
@@ -348,7 +348,7 @@ export async function setMany(entries: [IDBValidKey, any][], customStore = getDe
 
 获取所有 cursor 很简单：
 
-```
+```ts
 function eachCursor(customStore: Store, callback: (cursor: IDBCursorWithValue) => void): Promise<void> {
   return customStore('readonly', store => {
     store.openCursor().onsuccess = function(this) {
@@ -377,7 +377,7 @@ export function promisifyRequest<T = undefined>(request: IDBRequest<T> | IDBTran
 
 这样 promisify 终于完美了。获取所有 cursor 后，实现这 3 个 API 就太简单了，下面直接给出实现：
 
-```
+```ts
 export async function keys(customStore = getDefaultStore()): Promise<IDBValidKey[]> {
   const keys: IDBValidKey[] = []
 
