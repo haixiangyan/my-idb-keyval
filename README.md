@@ -2,7 +2,7 @@
 
 > 项目源码：https://github.com/Haixiang6123/my-idb-keyval
 > 
-> 预览链接：[http://yanhaixiang.com/learn-idb-keyval/](http://yanhaixiang.com/learn-idb-keyval/)
+> 预览链接：[http://yanhaixiang.com/my-idb-keyval/](http://yanhaixiang.com/my-idb-keyval/)
 > 
 > 参考轮子：https://github.com/jakearchibald/idb-keyval
 
